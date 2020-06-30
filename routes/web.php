@@ -27,8 +27,11 @@ Route::get('my_tickets', 'TicketsController@userTickets');
 
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function() {
+	Route::get('update/{ticket_id}', 'TicketsController@update_show');
+	Route::post('update/do/{ticket_id}', 'TicketsController@update');
+	Route::get('delete/{ticket_id}', 'TicketsController@delete');
 	Route::get('tickets', 'TicketsController@index');
-	Route::post('close_ticket/{ticket_id}', 'TicketsController@close');
+	Route::get('close_ticket/{ticket_id}', 'TicketsController@close');
 });
 
 Route::post('comment', 'CommentsController@postComment');

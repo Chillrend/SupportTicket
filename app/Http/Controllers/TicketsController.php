@@ -73,7 +73,6 @@ class TicketsController extends Controller
         ]);
         
         $ticket = null;
-        var_dump(public_path());
         if($request->hasFile('picture')){
             $image = $request->file('picture');
             $ticket_id = strtoupper(Str::random(10));
@@ -119,8 +118,56 @@ class TicketsController extends Controller
         $comments = $ticket->comments;
 
         $category = $ticket->category;
+        
 
         return view('tickets.show', compact('ticket', 'category', 'comments'));
+    }
+
+    public function update_show($ticket_id){
+        $ticket = Ticket::where('ticket_id', $ticket_id)->firstOrFail();
+
+        $category = $ticket->category;
+
+        $categories = Category::all();
+
+        return view('tickets.update', compact('ticket', 'categories','category'));
+    }
+
+    public function update($ticket_id, Request $request){
+        $this->validate($request, [
+            'title'     => 'required',
+            'category'  => 'required',
+            'priority'  => 'required',
+            'message'   => 'required',
+            'picture'   => 'sometimes|file|image|mimes:jpeg,png,gif|max:2048'
+        ]);
+
+        $tickets = Ticket::where('ticket_id', $ticket_id)->firstOrFail();
+
+        if($request->hasFile('picture')){
+            $image = $request->file('picture');
+            $image->store('public/tickets');
+
+            if($tickets->picture != null){
+                $old_image = $tickets->picture;
+                Storage::delete('public/tickets/' . $old_image);
+            }
+
+            $tickets->title = $request->input('title');
+            $tickets->category_id = $request->input('category');
+            $tickets->priority = $request->input('priority');
+            $tickets->message = $request->input('message');
+            $tickets->picture = $image->hashName();
+        }else{
+            $tickets->title = $request->input('title');
+            $tickets->category_id = $request->input('category');
+            $tickets->priority = $request->input('priority');
+            $tickets->message = $request->input('message');
+        }
+
+        $tickets->save();
+
+        return redirect()->back()->with("status", "A ticket with ID: #$tickets->ticket_id has been edited.");
     }
 
     /**
@@ -140,5 +187,12 @@ class TicketsController extends Controller
         $ticketOwner = $ticket->user;
 
         return redirect()->back()->with("status", "The ticket has been closed.");
+    }
+
+    public function delete($ticket_id)
+    {
+        Ticket::where('ticket_id', $ticket_id)->delete();
+
+        return redirect('/admin/tickets');
     }
 }

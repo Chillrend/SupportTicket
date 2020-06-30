@@ -4,21 +4,21 @@
 
 @section('content')
 	<div class="row">
-		<div class="col-md-10 col-md-offset-1">
-	        <div class="panel panel-default">
-	            <div class="panel-heading">Open New Ticket</div>
+		<div class="col-md-10 offset-1">
+	        <div class="card">
+	            <div class="card-header">Update ticket #{{$ticket->ticket_id}}</div>
 
-	            <div class="panel-body">
+	            <div class="card-body">
                     @include('includes.flash')
 
-	                <form class="form-horizontal" role="form" method="POST" action="{{ url('/new_ticket') }}">
+	                <form class="form-horizontal" role="form" enctype="multipart/form-data" method="POST" action="{{ url('/admin/update/do/' . $ticket->ticket_id) }}">
                         {!! csrf_field() !!}
 
                         <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
                             <label for="title" class="col-md-4 control-label">Title</label>
 
                             <div class="col-md-6">
-                                <input id="title" type="text" class="form-control" name="title" value="{{ old('title') }}">
+                                <input id="title" type="text" class="form-control" name="title" value="{{ $ticket->title }}">
 
                                 @if ($errors->has('title'))
                                     <span class="help-block">
@@ -34,8 +34,8 @@
                             <div class="col-md-6">
                                 <select id="category" type="category" class="form-control" name="category">
                                 	<option value="">Select Category</option>
-                                	@foreach ($categories as $category)
-										<option value="{{ $category->id }}">{{ $category->name }}</option>
+                                	@foreach ($categories as $cat)
+										<option value="{{ $cat->id }}" @if($cat->id == $ticket->category_id) selected @endif >{{ $cat->name }}</option>
                                 	@endforeach
                                 </select>
 
@@ -53,9 +53,9 @@
                             <div class="col-md-6">
                                 <select id="priority" type="" class="form-control" name="priority">
                                 	<option value="">Select Priority</option>
-                                	<option value="low">Low</option>
-                                	<option value="medium">Medium</option>
-                                	<option value="high">High</option>
+                                	<option value="low" @if($ticket->priority == "low") selected @endif>Low</option>
+                                	<option value="medium" @if($ticket->priority == "medium") selected @endif>Medium</option>
+                                	<option value="high" @if($ticket->priority == "high") selected @endif>High</option>
                                 </select>
 
                                 @if ($errors->has('priority'))
@@ -70,7 +70,7 @@
                             <label for="picture" class="col-md-4 control-label">Insert a picture</label>
 
                             <div class="col-md-6">
-                                <input type="file" id="picture" class="picture" name="message" accept="image/*" />
+                                <input type="file" id="picture" class="picture" name="picture" accept="image/*" />
 
                                 @if ($errors->has('picture'))
                                     <span class="help-block">
@@ -84,7 +84,7 @@
                             <label for="message" class="col-md-4 control-label">Message</label>
 
                             <div class="col-md-6">
-                                <textarea rows="10" id="message" class="form-control" name="message"></textarea>
+                                <textarea rows="10" id="message" class="form-control" name="message">{{$ticket->message}}</textarea>
 
                                 @if ($errors->has('message'))
                                     <span class="help-block">
@@ -97,7 +97,7 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-ticket"></i> Open Ticket
+                                    <i class="fa fa-btn fa-ticket"></i> Update Ticket
                                 </button>
                             </div>
                         </div>

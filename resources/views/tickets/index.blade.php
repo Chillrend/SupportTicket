@@ -48,11 +48,12 @@
 		        					</td>
 		        					<td>{{ $ticket->updated_at }}</td>
 		        					<td>
-										<a href="{{ url('tickets/' . $ticket->ticket_id) }}" class="btn btn-primary">Comment</a>
-										<form action="{{ url('admin/close_ticket/' . $ticket->ticket_id) }}" method="POST">
-		        							{!! csrf_field() !!}
-		        							<button type="submit" class="btn btn-danger">Close</button>
-		        						</form>
+										<div class="btn-group" role="group" aria-label="Basic example">
+											<a href="{{ url('tickets/' . $ticket->ticket_id) }}" class="btn btn-success" title="Comments"><i class="fas fa-comments"></i></a>
+											<a href="{{ url('admin/close_ticket/' . $ticket->ticket_id) }}" class="btn btn-danger" title="Close Ticket"><i class="fas fa-times"></i></a>
+											<a href="{{ url('admin/update/' . $ticket->ticket_id) }}" class="btn btn-info" title="Update Ticket"><i class="fas fa-pencil-alt"></i></a>
+											<a href="{{ url('admin/delete/' . $ticket->ticket_id) }}" class="btn btn-danger" title="Delete Ticket" onclick="return confirm('Are you sure?')"><i class="fas fa-trash-alt"></i></a>
+										</div>
 		        					</td>
 		        				</tr>
 		        			@endforeach
